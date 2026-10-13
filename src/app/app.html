@@ -1,0 +1,530 @@
+<div
+  class="flex h-screen w-full flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100"
+>
+  <!-- Header -->
+  <header
+    class="flex flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90"
+  >
+    <div>
+      <h1 class="text-lg font-semibold tracking-tight">TsigkouNav</h1>
+      <p class="text-xs text-slate-500 dark:text-slate-400">
+        Απόσταση, καύσιμα &amp; διόδια της διαδρομής σου
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button
+        type="button"
+        (click)="disclaimer.open()"
+        class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+        aria-label="Σχετικά με την εφαρμογή"
+        title="Σχετικά με την εφαρμογή"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="h-4.5 w-4.5"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.25v3.25a.75.75 0 001.5 0V9.75A.75.75 0 0010 9H9z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        (click)="theme.toggle()"
+        class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+        [attr.aria-label]="
+          theme.isDark() ? 'Ενεργοποίηση φωτεινού θέματος' : 'Ενεργοποίηση σκοτεινού θέματος'
+        "
+      >
+        @if (theme.isDark()) {
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="h-4.5 w-4.5"
+          >
+            <path
+              d="M12 3a1 1 0 011 1v1a1 1 0 11-2 0V4a1 1 0 011-1zm0 15a5 5 0 100-10 5 5 0 000 10zm9-6a1 1 0 010 2h-1a1 1 0 110-2h1zM4 12a1 1 0 010 2H3a1 1 0 110-2h1zm14.36-6.36a1 1 0 010 1.42l-.7.7a1 1 0 11-1.42-1.42l.7-.7a1 1 0 011.42 0zM7.76 16.24a1 1 0 010 1.42l-.7.7A1 1 0 015.64 17l.7-.7a1 1 0 011.42 0zM12 20a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm6.36 1.24l-.7-.7a1 1 0 111.42-1.42l.7.7a1 1 0 01-1.42 1.42zM6.36 6.36l-.7-.7A1 1 0 017.06 4.24l.7.7A1 1 0 016.36 6.36z"
+            />
+          </svg>
+        } @else {
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            class="h-4.5 w-4.5"
+          >
+            <path
+              d="M21.64 13a1 1 0 00-1.05-.14 8.05 8.05 0 01-3.37.73 8.15 8.15 0 01-8.14-8.14c0-1.18.26-2.31.73-3.37A1 1 0 008.4 1.26a10.14 10.14 0 1013.38 13.38 1 1 0 00-.14-1.64z"
+            />
+          </svg>
+        }
+      </button>
+    </div>
+  </header>
+
+  <app-disclaimer-dialog #disclaimer />
+
+  <!-- Main -->
+  <main class="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+    <!-- Left panel -->
+    <section
+      class="order-2 flex w-full flex-shrink-0 flex-col gap-4 overflow-y-auto border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 lg:order-1 lg:h-full lg:w-96 lg:border-r"
+    >
+      <!-- Stops -->
+      <div class="flex flex-col gap-3">
+        @for (stop of stops(); track stop.id; let i = $index; let total = $count) {
+          <div class="flex items-start gap-2">
+            <!-- reorder + number -->
+            <div class="flex flex-col items-center gap-1 pt-1.5">
+              <button
+                type="button"
+                (click)="moveStop(i, -1)"
+                [disabled]="i === 0"
+                class="text-slate-300 transition hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-0 dark:text-slate-600 dark:hover:text-slate-300"
+                aria-label="Μετακίνηση πάνω"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="h-3.5 w-3.5"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 3a1 1 0 01.7.29l5 5a1 1 0 01-1.4 1.42L11 6.41V16a1 1 0 11-2 0V6.41L5.7 9.71a1 1 0 01-1.4-1.42l5-5A1 1 0 0110 3z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <span
+                class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[11px] font-semibold text-white"
+                [style.background]="i === 0 ? '#16a34a' : i === total - 1 ? '#dc2626' : '#2563eb'"
+              >
+                {{ i + 1 }}
+              </span>
+
+              <button
+                type="button"
+                (click)="moveStop(i, 1)"
+                [disabled]="i === total - 1"
+                class="text-slate-300 transition hover:text-slate-600 disabled:cursor-not-allowed disabled:opacity-0 dark:text-slate-600 dark:hover:text-slate-300"
+                aria-label="Μετακίνηση κάτω"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="h-3.5 w-3.5"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 17a1 1 0 01-.7-.29l-5-5a1 1 0 011.4-1.42L9 13.59V4a1 1 0 112 0v9.59l3.3-3.3a1 1 0 011.4 1.42l-5 5A1 1 0 0110 17z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <!-- input -->
+            <div class="min-w-0 flex-1">
+              <label class="mb-1 block text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                {{ stopLabel(i, total) }}
+              </label>
+              <app-address-input
+                [placeholder]="stopLabel(i, total) + '…'"
+                [initialValue]="stop.label"
+                (selected)="onAddressSelected(stop.id, $event)"
+                (cleared)="onAddressCleared(stop.id)"
+              />
+            </div>
+
+            <!-- remove -->
+            <button
+              type="button"
+              (click)="removeStop(stop.id)"
+              [disabled]="!canRemoveStop()"
+              class="mt-6 flex-shrink-0 rounded-md p-1.5 text-slate-300 transition hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-0 dark:text-slate-600 dark:hover:bg-red-950/40 dark:hover:text-red-400"
+              aria-label="Αφαίρεση σημείου"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                class="h-4 w-4"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.808a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Επιλογή διοδίων για το σκέλος προς το επόμενο σημείο -->
+          @if (i < total - 1) {
+            <div class="-my-1.5 flex items-center gap-2 pl-2.75">
+              <span
+                class="h-5 w-0.5 rounded-full"
+                [class]="legAvoidTolls()[i] ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'"
+              ></span>
+              <button
+                type="button"
+                (click)="toggleLegTolls(i)"
+                [attr.aria-pressed]="legAvoidTolls()[i]"
+                [title]="
+                  legAvoidTolls()[i]
+                    ? 'Η διαδρομή αποφεύγει τα διόδια σε αυτό το κομμάτι. Πάτα για να επιτρέψεις διόδια.'
+                    : 'Πάτα για να αποφύγεις τα διόδια σε αυτό το κομμάτι.'
+                "
+                class="rounded-full border px-2 py-0.5 text-[11px] font-medium transition"
+                [class]="
+                  legAvoidTolls()[i]
+                    ? 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-950/70'
+                    : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
+                "
+              >
+                {{ legAvoidTolls()[i] ? '🚫 Χωρίς διόδια' : '💶 Με διόδια' }}
+              </button>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Add / clear actions -->
+      <div class="flex items-center gap-2">
+        <button
+          type="button"
+          (click)="addStop()"
+          [disabled]="!canAddStop()"
+          class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-dashed border-slate-300 px-3 py-2 text-sm font-medium text-slate-600 transition hover:border-blue-400 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-300 dark:hover:border-blue-500 dark:hover:text-blue-400"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            class="h-4 w-4"
+          >
+            <path
+              d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"
+            />
+          </svg>
+          Προσθήκη στάσης
+        </button>
+        <button
+          type="button"
+          (click)="clearAll()"
+          class="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400"
+        >
+          Καθαρισμός
+        </button>
+      </div>
+
+      <!-- Cost settings -->
+      <div class="rounded-xl border border-slate-200 p-3 dark:border-slate-800">
+        <p class="mb-2 text-xs font-medium text-slate-500 dark:text-slate-400">Ρυθμίσεις κόστους</p>
+        <label
+          class="mb-2 flex cursor-pointer items-center gap-2 text-xs text-slate-600 dark:text-slate-400"
+        >
+          <input
+            type="checkbox"
+            [checked]="allLegsAvoidTolls()"
+            [indeterminate]="someLegsAvoidTolls() && !allLegsAvoidTolls()"
+            (change)="setAvoidTollsEverywhere($any($event.target).checked)"
+            class="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600"
+          />
+          Αποφυγή διοδίων σε όλη τη διαδρομή
+        </label>
+        <p class="-mt-1 mb-2 pl-5.5 text-[11px] text-slate-400 dark:text-slate-500">
+          Ή διάλεξε ανά κομμάτι, από τα κουμπιά ανάμεσα στα σημεία.
+        </p>
+        <div class="mb-2">
+          <label for="vehicle" class="mb-1 block text-[11px] text-slate-500 dark:text-slate-400"
+            >Όχημα</label
+          >
+          <select
+            id="vehicle"
+            [value]="vehicle()"
+            (change)="setVehicle($any($event.target).value)"
+            class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+          >
+            <option value="car">Αυτοκίνητο</option>
+            <option value="motorcycle">Μηχανή</option>
+          </select>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="mb-1 block text-[11px] text-slate-500 dark:text-slate-400"
+              >Κατανάλωση (L/100km)</label
+            >
+            <input
+              type="number"
+              min="0"
+              step="0.1"
+              [value]="consumption()"
+              (input)="setConsumption($any($event.target).value)"
+              class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            />
+          </div>
+          <div>
+            <label class="mb-1 block text-[11px] text-slate-500 dark:text-slate-400"
+              >Τιμή καυσίμου (€/L)</label
+            >
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              [value]="fuelPrice()"
+              (input)="setFuelPrice($any($event.target).value)"
+              class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100"
+            />
+          </div>
+        </div>
+        <label
+          class="mt-2.5 flex cursor-pointer items-center gap-2 text-xs text-slate-600 dark:text-slate-400"
+        >
+          <input
+            type="checkbox"
+            [checked]="includeTolls()"
+            (change)="toggleTolls()"
+            class="h-3.5 w-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600"
+          />
+          Συμπερίλαβε εκτίμηση διοδίων στο σύνολο
+        </label>
+      </div>
+
+      <!-- Status -->
+      @if (loading()) {
+        <div
+          class="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
+        >
+          <div
+            class="h-3.5 w-3.5 flex-shrink-0 animate-spin rounded-full border-2 border-blue-300 border-t-blue-600 dark:border-blue-800 dark:border-t-blue-400"
+          ></div>
+          Υπολογισμός διαδρομής…
+        </div>
+      }
+
+      @if (error()) {
+        <div
+          class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300"
+        >
+          {{ error() }}
+        </div>
+      }
+
+      <!-- Results -->
+      @if (routeResult(); as result) {
+        <div
+          class="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/60"
+        >
+          <div class="flex items-baseline justify-between">
+            <div>
+              <p class="text-2xl font-semibold">{{ formatDistance(result.distanceMeters) }}</p>
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                {{ formatDuration(result.durationSeconds) }} οδήγηση
+              </p>
+            </div>
+
+            <div class="relative">
+              <button
+                type="button"
+                (click)="share()"
+                class="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:border-blue-400 hover:text-blue-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:border-blue-500 dark:hover:text-blue-400"
+                title="Στείλε τη διαδρομή σε κάποιον"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  class="h-3.5 w-3.5"
+                >
+                  <path
+                    d="M13 4.5a2.5 2.5 0 11.702 1.737L6.97 9.604a2.518 2.518 0 010 .792l6.733 3.367a2.5 2.5 0 11-.671 1.341l-6.733-3.367a2.5 2.5 0 110-3.475l6.733-3.366A2.52 2.52 0 0113 4.5z"
+                  />
+                </svg>
+                Κοινοποίηση
+              </button>
+              @if (shareFeedback()) {
+                <p
+                  role="status"
+                  class="absolute right-0 top-full z-10 mt-1 w-max max-w-56 rounded-md bg-slate-900 px-2 py-1 text-[11px] text-white shadow dark:bg-slate-100 dark:text-slate-900"
+                >
+                  {{ shareFeedback() }}
+                </p>
+              }
+            </div>
+          </div>
+
+          @if (result.legs.length > 1) {
+            <ul
+              class="mt-3 space-y-1.5 border-t border-slate-200 pt-3 text-xs text-slate-600 dark:border-slate-800 dark:text-slate-400"
+            >
+              @for (leg of result.legs; track $index) {
+                <li class="flex items-center justify-between gap-2">
+                  <span class="truncate">
+                    {{ stopLabel($index, routeStops().length) }} →
+                    {{ stopLabel($index + 1, routeStops().length) }}
+                    @if (leg.tollFree) {
+                      <span
+                        class="ml-1 rounded bg-emerald-50 px-1 text-[10px] font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                        >χωρίς διόδια</span
+                      >
+                    }
+                  </span>
+                  <span class="flex-shrink-0 font-medium text-slate-700 dark:text-slate-300">
+                    {{ formatDistance(leg.distanceMeters) }} ·
+                    {{ formatDuration(leg.durationSeconds) }}
+                  </span>
+                </li>
+              }
+            </ul>
+          }
+
+          <!-- Κόστος: καύσιμα + διόδια -->
+          <div
+            class="mt-3 space-y-1.5 border-t border-slate-200 pt-3 text-sm dark:border-slate-800"
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500 dark:text-slate-400">Καύσιμα</span>
+              <span class="font-medium">{{ formatCurrency(fuelCost()) }}</span>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500 dark:text-slate-400">
+                Διόδια ({{ vehicle() === 'car' ? 'αυτοκίνητο' : 'μηχανή' }})
+              </span>
+              <span
+                class="font-medium"
+                [class.text-slate-400]="!includeTolls()"
+                [class.dark:text-slate-500]="!includeTolls()"
+              >
+                {{ formatCurrency(tollEstimate().totalCost) }}
+              </span>
+            </div>
+
+            @if (tollEstimate().items.length > 0) {
+              <ul
+                class="ml-2 space-y-0.5 border-l border-slate-200 pl-2 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400"
+              >
+                @for (item of tollEstimate().items; track $index) {
+                  <li class="flex items-center justify-between gap-2">
+                    <span class="truncate">
+                      @if (item.highway !== 'BRIDGE') {
+                        <span class="font-medium text-slate-600 dark:text-slate-300">{{
+                          item.highway
+                        }}</span>
+                        ·
+                      }
+                      {{ item.label }}
+                    </span>
+                    <span class="flex-shrink-0">{{ formatCurrency(item.cost) }}</span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="text-xs text-slate-400 dark:text-slate-500">
+                Δεν εντοπίστηκαν σταθμοί διοδίων στη διαδρομή.
+              </p>
+            }
+
+            <div
+              class="flex items-center justify-between border-t border-slate-200 pt-1.5 text-base font-semibold dark:border-slate-800"
+            >
+              <span>Σύνολο διαδρομής</span>
+              <span>{{ formatCurrency(totalTripCost()) }}</span>
+            </div>
+
+            @if (tollComparison(); as cmp) {
+              <div
+                class="rounded-md border border-emerald-200 bg-emerald-50/60 px-2 py-1.5 text-xs text-emerald-900 dark:border-emerald-900 dark:bg-emerald-950/30 dark:text-emerald-200"
+              >
+                <p class="mb-1 font-medium">Σε σχέση με τη διαδρομή με διόδια:</p>
+                <ul class="space-y-0.5">
+                  <li>
+                    {{ cmp.extraSeconds >= 0 ? '+' : '−' }}{{ formatDuration(abs(cmp.extraSeconds)) }}
+                    χρόνος ·
+                    {{ cmp.extraMeters >= 0 ? '+' : '−' }}{{ formatDistance(abs(cmp.extraMeters)) }}
+                  </li>
+                  <li>Γλιτώνεις {{ formatCurrency(cmp.tollsSaved) }} διόδια</li>
+                  <li class="font-semibold">
+                    @if (cmp.netSaving >= 0) {
+                      Καθαρό όφελος {{ formatCurrency(cmp.netSaving) }} (μετά τα επιπλέον καύσιμα)
+                    } @else {
+                      Τελικά κοστίζει {{ formatCurrency(-cmp.netSaving) }} παραπάνω (λόγω καυσίμων)
+                    }
+                  </li>
+                </ul>
+              </div>
+            }
+
+            @if (result.hasFerry) {
+              <p
+                class="rounded-md bg-sky-50 px-2 py-1.5 text-[11px] text-sky-800 dark:bg-sky-950/40 dark:text-sky-300"
+              >
+                ⛴️ Η διαδρομή χωρίς διόδια περιλαμβάνει πορθμείο. Το εισιτήριο δεν συμπεριλαμβάνεται
+                στο κόστος και ο χρόνος αναμονής μπορεί να διαφέρει.
+              </p>
+            }
+
+            <p
+              class="rounded-md bg-amber-50 px-2 py-1.5 text-[11px] text-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
+            >
+              ⚠️ Οι τιμές και ο εντοπισμός των διοδίων είναι κατά προσέγγιση και μπορεί να διαφέρουν
+              από την πραγματική χρέωση.
+            </p>
+
+            <p class="text-[11px] text-slate-400 dark:text-slate-500">
+              Τιμές ανά σταθμό διοδίων από το
+              <a
+                href="https://mydiodia.gr/"
+                target="_blank"
+                rel="noopener"
+                class="underline hover:text-blue-600 dark:hover:text-blue-400"
+                >mydiodia.gr</a
+              >
+              (<a
+                href="https://creativecommons.org/licenses/by/4.0/"
+                target="_blank"
+                rel="noopener"
+                class="underline hover:text-blue-600 dark:hover:text-blue-400"
+                >CC BY 4.0</a
+              >, ενημέρωση {{ tollDataDate }}).
+            </p>
+          </div>
+        </div>
+      } @else if (!loading() && !error()) {
+        <p
+          class="rounded-xl border border-dashed border-slate-200 p-4 text-center text-sm text-slate-400 dark:border-slate-800 dark:text-slate-500"
+        >
+          Συμπλήρωσε τουλάχιστον 2 σημεία για να δεις απόσταση &amp; διαδρομή.
+        </p>
+      }
+
+      <!-- Μακριά από τα κουμπιά, για να μη γίνονται κλικ κατά λάθος (πολιτική AdSense). -->
+      <app-ad-slot class="mt-auto block pt-2" />
+
+      <p class="text-center text-[11px] text-slate-400 dark:text-slate-500">
+        <a
+          href="privacy.html"
+          target="_blank"
+          class="underline hover:text-blue-600 dark:hover:text-blue-400"
+          >Πολιτική απορρήτου</a
+        >
+      </p>
+    </section>
+
+    <!-- Map -->
+    <section class="relative order-1 min-h-[320px] w-full flex-1 lg:order-2 lg:min-h-0">
+      <app-map [stops]="readyStops()" [route]="routeResult()" class="absolute inset-0 block" />
+    </section>
+  </main>
+</div>

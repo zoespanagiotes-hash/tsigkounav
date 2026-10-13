@@ -1,0 +1,63 @@
+<dialog
+  #dialog
+  (close)="onClosed()"
+  (click)="onDialogClick($event)"
+  aria-labelledby="disclaimer-title"
+  class="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl bg-transparent p-0 text-slate-900 backdrop:bg-slate-950/60 backdrop:backdrop-blur-sm dark:text-slate-100"
+>
+  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-xl dark:border-slate-800 dark:bg-slate-900">
+    <div class="flex items-start gap-3">
+      <span
+        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-100 text-lg dark:bg-amber-950/60"
+        aria-hidden="true"
+      >
+        ⚠️
+      </span>
+      <div>
+        <h2 id="disclaimer-title" class="text-base font-semibold">Πριν ξεκινήσεις</h2>
+        <p class="mt-1 text-sm text-slate-600 dark:text-slate-300">
+          Αυτή η εφαρμογή φτιάχτηκε με <strong>vibe coding</strong>, δηλαδή κυρίως με τη βοήθεια AI
+          και χωρίς εκτενή έλεγχο. Μπορεί να έχει λάθη.
+        </p>
+      </div>
+    </div>
+
+    <ul class="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+      <li class="flex gap-2">
+        <span aria-hidden="true">🗺️</span>
+        <span>
+          Η <strong>διαδρομή και η απόσταση</strong> υπολογίζονται από δεδομένα του OpenStreetMap
+          και μπορεί να διαφέρουν από αυτή που θα ακολουθήσεις.
+        </span>
+      </li>
+      <li class="flex gap-2">
+        <span aria-hidden="true">💶</span>
+        <span>
+          Τα <strong>διόδια</strong> εντοπίζονται αυτόματα, κατά προσέγγιση, με τιμές από το
+          mydiodia.gr.
+        </span>
+      </li>
+      <li class="flex gap-2">
+        <span aria-hidden="true">⛽</span>
+        <span>
+          Τα <strong>καύσιμα</strong> υπολογίζονται μόνο από την κατανάλωση και την τιμή που
+          βάζεις εσύ.
+        </span>
+      </li>
+    </ul>
+
+    <p class="mt-4 rounded-lg bg-slate-100 px-3 py-2 text-sm text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+      Χρησιμοποίησέ την ως <strong>ενδεικτικό βοήθημα</strong> και μη βασίζεσαι αποκλειστικά σε
+      αυτήν. Για κάτι σημαντικό, έλεγξε και επίσημες πηγές.
+    </p>
+
+    <button
+      type="button"
+      (click)="close()"
+      autofocus
+      class="mt-5 w-full rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:bg-blue-500 dark:hover:bg-blue-400"
+    >
+      Κατάλαβα
+    </button>
+  </div>
+</dialog>
